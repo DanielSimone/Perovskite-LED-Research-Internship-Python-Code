@@ -287,7 +287,7 @@ for a in range(len(I_PD_dc_list)):
     EQE_num4.append(2 * np.pi * integrate.trapezoid((EQE_num1[a] * EQE_num2 / EQE_num3), theta_interp))
 EQE = []
 for a in EQE_num4:
-    EQE.append(100 * a / (1240e-9 * current_dc_array[EQE_num4.index(a)]))
+    EQE.append(1/100000000 * a / (1240e-9 * current_dc_array[EQE_num4.index(a)]))
 for j in j_list:
     j /= 10 # Converts current density back to mA/cm^2
 fig2, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(1, 5)
@@ -302,10 +302,10 @@ print(EQE)
 Radiance_W = []
 Radiance_lm = []
 for a in range(len(I_PD_dc_list)):
-    Radiance_W.append((I_PD_dc_list[a] * r**2) / (A_PD * integrate.trapezoid((rho_lambda_theta_array[1] * R2_array),
+    Radiance_W.append(100 * (I_PD_dc_list[a] * r**2) / (A_PD * integrate.trapezoid((rho_lambda_theta_array[1] * R2_array),
                                                                              wavelength_list)) / A_LED)
 for a in Radiance_W:
-    Radiance_lm.append(683 * a * integrate.trapezoid((rho_lambda_theta_array[1] * F_array), wavelength_list))
+    Radiance_lm.append(1/100 * 683 * a * integrate.trapezoid((rho_lambda_theta_array[1] * F_array), wavelength_list))
 print("Radiance (W) is: ")
 print(Radiance_W)
 print("Radiance (lm) is: ")
@@ -314,7 +314,7 @@ print(Radiance_lm)
 # Luminance calculations and graph
 Luminance = []
 for a in Radiance_W:
-    Luminance.append(683 * a * integrate.trapezoid((rho_lambda_theta_array[1] * F_array), wavelength_list))
+    Luminance.append(1/100 * 683 * a * integrate.trapezoid((rho_lambda_theta_array[1] * F_array), wavelength_list))
 ax2.plot(Luminance, voltage_dc_list)
 ax2.title.set_text("Luminance vs. Voltage")
 ax2.set_xlabel("V (V)")
@@ -334,7 +334,7 @@ for a in range(len(I_PD_dc_list)):
 PE = np.array([])
 voltage_dc_list[10] = 0.1 # Converts zero value to a very small value
 PE = PE_num4 / (current_dc_array * np.array(voltage_dc_list))
-PE_array = PE * (2 * np.pi * 683)
+PE_array = PE * (2 * np.pi * 683 / 10)
 PE_list = np.ndarray.tolist(PE_array)
 ax3.plot(PE_list, Luminance)
 ax3.title.set_text("Power Efficiency vs. Luminance")
@@ -344,7 +344,7 @@ print("Power efficiency (lm/W) is: ")
 print(PE_list)
 
 # Current efficacy calculations and graph
-CE = np.ndarray.tolist(A_LED * (np.array(Luminance) / current_dc_array))
+CE = np.ndarray.tolist(A_LED * (np.array(Luminance) / current_dc_array / 10))
 ax4.plot(CE, Luminance)
 ax4.title.set_text("Current Efficacy vs. Luminance")
 ax4.set_xlabel("Forward Luminance (cd/m^2)")
@@ -362,6 +362,12 @@ for a in PD_Power_V_Theta:
 ax5.title.set_text("Total PD Power at 6.5V")
 ax5.set_xlabel("Degrees")
 ax5.set_ylabel("PD Power")
+
+# Other printed lists
+print("Voltage (V) is: ")
+print(voltage_dc_list)
+print("Current density (J) is: ")
+print(j_list)
 plt.show()
 
 # CODE GRAVEYARD: THE PLACE OLD CODE GOES TO DIE
